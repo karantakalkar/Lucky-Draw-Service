@@ -13,9 +13,10 @@ class Reward(models.Model):
 
 class LuckyDraw(models.Model):
     name = models.CharField(max_length=100)
-    timing = models.DateTimeField()
+    timing = models.DateField()
     is_active = models.BooleanField(default=True)
     rewards = models.ManyToManyField(Reward)
     participants = models.ManyToManyField(Ticket)
-    winners = models.ManyToManyField(User)
+    winner = models.ForeignKey(User , on_delete=models.SET_NULL , null=True , blank=True)
+
 
