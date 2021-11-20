@@ -14,27 +14,38 @@ from lucky_draw_api.serializers import UserSerializer, TicketSerializer, RewardS
 from lucky_draw_api.models import Ticket, Reward, LuckyDraw, Winner
 
 class UserViewSet(viewsets.ModelViewSet):
+  """
+    CRUD Model Viewset for User
+  """
   queryset = User.objects.all()
   serializer_class = UserSerializer
 
-class TicketViewSet(viewsets.ModelViewSet):
-  queryset = Ticket.objects.all()
-  serializer_class = TicketSerializer
-
 class RewardViewSet(viewsets.ModelViewSet):
+  """
+    CRUD Model Viewset for Reward
+  """
   queryset = Reward.objects.all()
   serializer_class = RewardSerializer
 
+
+class TicketViewSet(viewsets.ModelViewSet):
+  """
+    Task 1 (View): Design an API which allows users to get the raffle tickets.
+  """
+  queryset = Ticket.objects.all()
+  serializer_class = TicketSerializer
+
 class LuckyDrawViewSet(viewsets.ModelViewSet):
+  """
+    Task 2 (View): Design an API which shows the next Lucky Draw Event timing & the corresponding reward.
+  """
   queryset = LuckyDraw.objects.filter(is_active = True)
   serializer_class = LuckyDrawSerializer
 
-class WinnerViewSet(viewsets.ModelViewSet):
-  queryset = Winner.objects.filter(win_date__gte = datetime.now() - timedelta(days = 7))
-  serializer_class = WinnerSerializer
-
 class Register(APIView):
-
+  """
+    Task 3 (View): Design an API which allows users to participate in the game (only once).
+  """
   def post(self, request):
     response = {}
     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -86,9 +97,18 @@ class Register(APIView):
     except Exception as e:
         print(e)
     return Response(response, status=status_code)
+
+class WinnerViewSet(viewsets.ModelViewSet):
+  """
+    Task 4 (View): Design an API which allows users to participate in the game (only once).
+  """
+  queryset = Winner.objects.filter(win_date__gte = datetime.now() - timedelta(days = 7))
+  serializer_class = WinnerSerializer
   
 class Draw(APIView):
-
+  """
+    Task 5 (View): Compute the winner for the event and announce the winner.
+  """
   def post(self, request):
     response = {}
     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
