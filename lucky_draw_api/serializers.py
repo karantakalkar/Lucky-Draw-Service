@@ -21,13 +21,13 @@ class TicketSerializer(serializers.ModelSerializer):
 class RewardSerializer(serializers.ModelSerializer):
    class Meta:
        model = Reward
-       fields = ('name', 'announce_date', 'is_won')
+       fields = ('name', 'redeem_date', 'is_won')
        read_only_fields = ('is_won',)
 
 class LuckyDrawSerializer(serializers.ModelSerializer):
    class Meta:
        model = LuckyDraw
-       fields = ('name', 'timing', 'is_active', 'rewards', 'participants', 'id')
+       fields = ('name', 'timing', 'is_active', 'rewards', 'reg_tickets', 'id')
        read_only_fields = ('id',)
 
 class WinnerSerializer(serializers.ModelSerializer):

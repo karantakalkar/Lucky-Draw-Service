@@ -15,7 +15,7 @@ class Ticket(models.Model):
 
 class Reward(models.Model):
     name = models.CharField(max_length=100)
-    announce_date = models.DateField()
+    redeem_date = models.DateField()
     is_won = models.BooleanField(default=False)
 
     def __str__(self):
@@ -26,7 +26,7 @@ class LuckyDraw(models.Model):
     timing = models.DateField()
     is_active = models.BooleanField(default=True)
     rewards = models.ManyToManyField(Reward)
-    participants = models.ManyToManyField(Ticket)
+    reg_tickets = models.ManyToManyField(Ticket)
 
     def __str__(self):
         return self.name
