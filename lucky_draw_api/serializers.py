@@ -27,5 +27,10 @@ class RewardSerializer(serializers.ModelSerializer):
 class LuckyDrawSerializer(serializers.ModelSerializer):
    class Meta:
        model = LuckyDraw
-       fields = ('name', 'timing', 'is_active', 'rewards', 'participants', 'winner', 'id')
-       read_only_fields = ('winner', 'id',)
+       fields = ('name', 'timing', 'is_active', 'rewards', 'participants', 'id')
+       read_only_fields = ('id',)
+
+class WinnerSerializer(serializers.ModelSerializer):
+   class Meta:
+       model = Winner
+       fields = ('name', 'ticket', 'reward', 'lucky_draw', 'id')
