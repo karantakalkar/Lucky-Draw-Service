@@ -25,8 +25,8 @@ class LuckyDraw(models.Model):
     name = models.CharField(max_length=100)
     timing = models.DateField()
     is_active = models.BooleanField(default=True)
-    rewards = models.ManyToManyField(Reward)
-    reg_tickets = models.ManyToManyField(Ticket)
+    rewards = models.ManyToManyField(Reward, blank = True)
+    reg_tickets = models.ManyToManyField(Ticket, blank = True)
 
     def __str__(self):
         return self.name

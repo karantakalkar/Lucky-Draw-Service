@@ -5,7 +5,7 @@ from lucky_draw_api.models import *
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'email', 'id')
+        fields = ('username', 'email', 'password', 'id')
 
 class TicketSerializer(serializers.ModelSerializer):
    class Meta:
