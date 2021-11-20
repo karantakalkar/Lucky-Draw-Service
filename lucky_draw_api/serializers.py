@@ -33,4 +33,4 @@ class LuckyDrawSerializer(serializers.ModelSerializer):
 class WinnerSerializer(serializers.ModelSerializer):
    class Meta:
        model = Winner
-       fields = ('name', 'ticket', 'reward', 'lucky_draw', 'id')
+       fields = ('name', 'ticket', 'reward', 'lucky_draw', 'win_date', 'id')

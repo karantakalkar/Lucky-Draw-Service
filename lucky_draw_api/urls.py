@@ -14,6 +14,6 @@ router.register(r'winners', WinnerViewSet)
 
 urlpatterns = [
    path('', include(router.urls)),
-   path('register/', Register.as_view()),
-   path('draw/', Draw.as_view())
+   path('register', Register.as_view()),
+   path('draw', Draw.as_view())
 ]

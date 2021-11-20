@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from .models import *
 
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from lucky_draw_api.serializers import UserSerializer, TicketSerializer, RewardSerializer, LuckyDrawSerializer, WinnerSerializer
 from lucky_draw_api.models import Ticket, Reward, LuckyDraw, Winner
@@ -29,7 +29,7 @@ class LuckyDrawViewSet(viewsets.ModelViewSet):
   serializer_class = LuckyDrawSerializer
 
 class WinnerViewSet(viewsets.ModelViewSet):
-  queryset = Winner.objects.all()
+  queryset = Winner.objects.filter(win_date__gte = datetime.now() - timedelta(days = 7))
   serializer_class = WinnerSerializer
 
 class Register(APIView):
@@ -133,7 +133,7 @@ class Draw(APIView):
       reward.is_won = True
       reward.save()
 
-      winner_entry = Winner.objects.create(name = winner.username, ticket = win_ticket, reward = reward, lucky_draw = lucky_draw)
+      winner_entry = Winner.objects.create(name = winner.username, ticket = win_ticket, reward = reward, lucky_draw = lucky_draw, win_dtae = datetime.now())
 
       response['status_code'] = 200
       response['status_message'] = 'Draw Successfull'

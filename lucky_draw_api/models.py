@@ -35,7 +35,8 @@ class Winner(models.Model):
     name = models.CharField(max_length=100)
     ticket = models.ForeignKey(Ticket , on_delete=models.SET_NULL , null=True , blank=True)
     reward = models.ForeignKey(Reward , on_delete=models.SET_NULL , null=True , blank=True)
-    lucky_draw = models.ForeignKey(LuckyDraw , on_delete=models.SET_NULL , null=True , blank=True)    
+    lucky_draw = models.ForeignKey(LuckyDraw , on_delete=models.SET_NULL , null=True , blank=True)
+    win_date =  models.DateTimeField(auto_now_add=True, null=True, blank = True)
 
     def __str__(self):
         return self.name
