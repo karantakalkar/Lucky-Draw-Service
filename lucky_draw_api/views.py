@@ -35,12 +35,40 @@ class Register(APIView):
 
   def post(self, request):
     response = {}
+    response['status_code'] = 500
+    response['status_message'] = 'Internal Server Error'
+
     try:
       ticket_id = request.data.get('ticket_id')
       lucky_draw_id = request.data.get('lucky_draw_id')
 
+      if ticket_id is None:
+          response['status_message'] = 'ticket_id is required'
+          raise Exception('ticket_id is required')
+      
+      if lucky_draw_id is None:
+          response['status_message'] = 'lucky_draw_id is required'
+          raise Exception('lucky_draw_id is required')
+
       lucky_draw = LuckyDraw.objects.get(id = lucky_draw_id)
       ticket = Ticket.objects.get(id = ticket_id)
+
+      if not lucky_draw.is_active:
+          response['status_code'] = 422
+          response['status_message'] = 'lucky_draw expired'
+          raise Exception('lucky_draw expired')
+
+      if ticket.is_used:
+          response['status_code'] = 422
+          response['status_message'] = 'ticket already deposited'
+          raise Exception('ticket already deposited')
+      
+      user = ticket.user
+
+      if lucky_draw.participants.filter(user = user):
+          response['status_code'] = 422
+          response['status_message'] = 'you are already registered for this lucky draw'
+          raise Exception('already registered')
       
       lucky_draw.participants.add(ticket)
       lucky_draw.save()
