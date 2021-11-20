@@ -10,8 +10,8 @@ class UserSerializer(serializers.ModelSerializer):
 class TicketSerializer(serializers.ModelSerializer):
    class Meta:
        model = Ticket
-       fields = ('unique_code', 'user', 'is_used')
-       read_only_fields = ('unique_code', 'is_used')
+       fields = ('unique_code', 'user', 'is_used','id')
+       read_only_fields = ('unique_code', 'is_used', 'id')
 
    def create(self, validated_data):
       unique_code = generate_code()
@@ -22,10 +22,10 @@ class RewardSerializer(serializers.ModelSerializer):
    class Meta:
        model = Reward
        fields = ('name', 'announce_date', 'is_won')
-       read_only_fields = ('is_won')
+       read_only_fields = ('is_won',)
 
 class LuckyDrawSerializer(serializers.ModelSerializer):
    class Meta:
        model = LuckyDraw
-       fields = ('name', 'timing', 'is_active', 'rewards', 'participants', 'winner')
-       read_only_fields = ('winner')
+       fields = ('name', 'timing', 'is_active', 'rewards', 'participants', 'winner', 'id')
+       read_only_fields = ('winner', 'id',)

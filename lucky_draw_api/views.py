@@ -1,6 +1,8 @@
 from django.shortcuts import render
 
 from rest_framework import viewsets
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 from .models import *
 
@@ -20,6 +22,29 @@ class RewardViewSet(viewsets.ModelViewSet):
    serializer_class = RewardSerializer
 
 class LuckyDrawViewSet(viewsets.ModelViewSet):
-  queryset = LuckyDraw.objects.all()
+  queryset = LuckyDraw.objects.filter(is_active = True)
   serializer_class = LuckyDrawSerializer
 
+class Register(APIView):
+
+  def post(self, request):
+    response = {}
+    try:
+      ticket_id = request.data.get('ticket_id')
+      lucky_draw_id = request.data.get('lucky_draw_id')
+
+      lucky_draw = LuckyDraw.objects.get(id = lucky_draw_id)
+      ticket = Ticket.objects.get(id = ticket_id)
+      
+      lucky_draw.participants.add(ticket)
+      lucky_draw.save()
+
+      ticket.is_used = True
+      ticket.save()
+
+      response['status_code'] = 200
+      response['status_message'] = 'Registration Successfull' 
+    except Exception as e:
+        print(e)
+    return Response(response)
+  
