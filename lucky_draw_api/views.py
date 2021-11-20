@@ -22,3 +22,4 @@ class RewardViewSet(viewsets.ModelViewSet):
 class LuckyDrawViewSet(viewsets.ModelViewSet):
   queryset = LuckyDraw.objects.all()
   serializer_class = LuckyDrawSerializer
+
