@@ -15,6 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         unique_code = generate_code()
         validated_data['password'] = make_password(validated_data['password'])
+        
         return User.objects.create(**validated_data)
 
 class TicketSerializer(serializers.ModelSerializer):

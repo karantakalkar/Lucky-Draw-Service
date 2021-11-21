@@ -35,7 +35,7 @@ class LuckyDraw(models.Model):
       Lucky Draw Model
     """
     name = models.CharField(max_length=100)
-    timing = models.DateField()
+    timing = models.TimeField()
     is_active = models.BooleanField(default=True)
     rewards = models.ManyToManyField(Reward, blank = True)
     reg_tickets = models.ManyToManyField(Ticket, blank = True)

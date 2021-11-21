@@ -36,6 +36,21 @@ class TicketViewSet(viewsets.ModelViewSet):
   queryset = Ticket.objects.all()
   serializer_class = TicketSerializer
 
+  # altering default viewset method for creating multiple tickets
+  def create(self, request, *args, **kwargs):
+    num = self.request.query_params.get('amount')
+    data = [request.data]
+
+    if num:
+      data = data*int(num)
+
+    serializer = self.get_serializer(data=data, many= True)
+    serializer.is_valid(raise_exception=True)
+    self.perform_create(serializer)
+
+    headers = self.get_success_headers(serializer.data)
+    return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
 class LuckyDrawViewSet(viewsets.ModelViewSet):
   """
     Task 2 (View): Design an API which shows the next Lucky Draw Event timing & the corresponding reward.
@@ -132,9 +147,20 @@ class Register(APIView):
 class WinnerViewSet(viewsets.ModelViewSet):
   """
     Task 4 (View): Design an API which lists all the winners of all the events in the last one week.
+
+    (Querying the API with span = 7)
   """
-  queryset = Winner.objects.filter(win_date__gte = datetime.now() - timedelta(days = 7))
   serializer_class = WinnerSerializer
+  queryset = Winner.objects.all()
+
+  def get_queryset():
+    queryset = self.queryset
+    span = self.request.query_params.get('span')
+  
+    if span:
+        queryset = queryset.filter(win_date__gte = datetime.now() - timedelta(days = int(span)))
+
+    return queryset
   
 class Draw(APIView):
   """
