@@ -4,6 +4,7 @@ from django.forms.models import model_to_dict
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import action
 
 from .models import *
 
@@ -39,8 +40,38 @@ class LuckyDrawViewSet(viewsets.ModelViewSet):
   """
     Task 2 (View): Design an API which shows the next Lucky Draw Event timing & the corresponding reward.
   """
-  queryset = LuckyDraw.objects.filter(is_active = True)
+  queryset = LuckyDraw.objects.all()
   serializer_class = LuckyDrawSerializer
+
+  @action(detail=True, methods=['get'])
+  def next_event(self, request, pk = None):
+      response = {}
+      status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+      response['status'] = "error"
+
+      try:
+        lucky_draw = self.get_object()
+
+        if not lucky_draw.is_active:
+            status_code = status.HTTP_403_FORBIDDEN
+            response['message'] = 'lucky_draw expired'
+            raise Exception('lucky_draw expired')
+
+        if len(lucky_draw.rewards.all()) == 0:
+            status_code = status.HTTP_400_BAD_REQUEST
+            response['message'] = 'no upcoming rewards'
+            raise Exception('no upcoming rewards')
+        
+        next_event = lucky_draw.rewards.filter(redeem_date__gt = datetime.now()).order_by('redeem_date').first()
+
+        serializer = RewardSerializer(next_event)
+
+        status_code = status.HTTP_200_OK
+        response = serializer.data
+
+      except Exception as e:
+        print(e)
+      return Response(response, status=status_code)
 
 class Register(APIView):
   """
@@ -100,7 +131,7 @@ class Register(APIView):
 
 class WinnerViewSet(viewsets.ModelViewSet):
   """
-    Task 4 (View): Design an API which allows users to participate in the game (only once).
+    Task 4 (View): Design an API which lists all the winners of all the events in the last one week.
   """
   queryset = Winner.objects.filter(win_date__gte = datetime.now() - timedelta(days = 7))
   serializer_class = WinnerSerializer
