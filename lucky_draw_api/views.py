@@ -1,10 +1,11 @@
 from django.shortcuts import render
-from django.forms.models import model_to_dict
 
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import action
+
+from django.contrib.auth.hashers import make_password
 
 from .models import *
 
@@ -20,6 +21,48 @@ class UserViewSet(viewsets.ModelViewSet):
   """
   queryset = User.objects.all()
   serializer_class = UserSerializer
+
+  @action(detail=False, methods=['post'])
+  def login(self, request):
+      response = {}
+      status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+      response['status'] = "error"
+
+      # not using serilaizer validation here to overcome name field uniqueness
+      try:
+        username = request.data.get('username')
+        password = request.data.get('password')
+
+        if username is None:
+          status_code = status.HTTP_400_BAD_REQUEST
+          response['message'] = 'username is required'
+          raise Exception('username is required')
+        
+        if password is None:
+          status_code = status.HTTP_400_BAD_REQUEST
+          response['message'] = 'password is required'
+          raise Exception('password is required')
+
+        user = User.objects.filter(username = username).first()
+
+        if user is None:
+          status_code = status.HTTP_400_BAD_REQUEST
+          response['message'] = 'no user with given username exists'
+          raise Exception('no user with given username exists')
+
+        if not user.password == make_password(password, salt='grofers'):
+          status_code = status.HTTP_400_BAD_REQUEST
+          response['message'] = 'wrong password'
+          raise Exception('wrong password')
+
+        serializer  = UserSerializer(user)
+
+        response['status'] = "success"
+        response['user'] = serializer.data
+        status_code = status.HTTP_200_OK
+      except Exception as e:
+        print(e)
+      return Response(response, status=status_code)
 
 class RewardViewSet(viewsets.ModelViewSet):
   """
@@ -138,7 +181,7 @@ class Register(APIView):
       ticket.save()
 
       response['status'] = "success"
-      response['ticket'] = model_to_dict(ticket)
+      response['ticket'] = TicketSerializer(ticket).data()
       status_code = status.HTTP_200_OK
     except Exception as e:
         print(e)
@@ -153,7 +196,7 @@ class WinnerViewSet(viewsets.ReadOnlyModelViewSet):
   serializer_class = WinnerSerializer
   queryset = Winner.objects.all()
 
-  def get_queryset():
+  def get_queryset(self):
     queryset = self.queryset
     span = self.request.query_params.get('span')
   

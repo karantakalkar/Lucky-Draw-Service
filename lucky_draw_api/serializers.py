@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from django.contrib.auth.hashers import make_password
 
 from lucky_draw_api.models import *
 
@@ -14,7 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
     # override default method to hash password
     def create(self, validated_data):
         unique_code = generate_code()
-        validated_data['password'] = make_password(validated_data['password'])
+        validated_data['password'] = make_password(validated_data['password'], salt='grofers')
 
         return User.objects.create(**validated_data)
 
