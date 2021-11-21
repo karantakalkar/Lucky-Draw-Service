@@ -144,7 +144,7 @@ class Register(APIView):
         print(e)
     return Response(response, status=status_code)
 
-class WinnerViewSet(viewsets.ModelViewSet):
+class WinnerViewSet(viewsets.ReadOnlyModelViewSet):
   """
     Task 4 (View): Design an API which lists all the winners of all the events in the last one week.
 
@@ -199,9 +199,6 @@ class Draw(APIView):
           status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
           response['message'] = 'No tickets registered for the draw'
           raise Exception('no tickets registered for the draw')
-
-      win_ticket = random.choice(tickets)
-      winner = win_ticket.user
       
       reward = lucky_draw.rewards.filter(redeem_date=redeem_date).first()
 
@@ -214,15 +211,22 @@ class Draw(APIView):
           status_code = status.HTTP_403_FORBIDDEN
           response['message'] = 'Reward already claimed for today'
           raise Exception('reward already claimed for today')
+
+      win_ticket = random.choice(tickets)
+      
+      win_ticket.used_at = lucky_draw.name
+      win_ticket.save()
+
+      winner = win_ticket.user
       
       reward.is_won = True
       reward.save()
 
-      winner_entry = Winner.objects.create(name = winner.username, ticket = win_ticket, reward = reward, lucky_draw = lucky_draw, win_date = datetime.now())
+      winner_entry = Winner.objects.create(user = winner, ticket = win_ticket, reward = reward, lucky_draw = lucky_draw, win_date = redeem_date)
 
       status_code = status.HTTP_200_OK
       response['status'] = "success"
-      response['winner'] = model_to_dict(winner_entry)
+      response['winner'] = WinnerSerializer(winner_entry).data()
     except Exception as e:
         print(e)
     return Response(response, status=status_code)

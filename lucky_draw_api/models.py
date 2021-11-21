@@ -13,8 +13,9 @@ class Ticket(models.Model):
       Ticket Model
     """
     unique_code = models.CharField(max_length=10, blank = True)
-    user = models.ForeignKey(User , on_delete=models.CASCADE)
     is_used = models.BooleanField(default=False)
+    user = models.ForeignKey(User , on_delete=models.CASCADE)
+    used_at = models.CharField(max_length=100, default="N/A")
 
     def __str__(self):
         return self.unique_code
@@ -47,11 +48,11 @@ class Winner(models.Model):
     """
       Winner Model
     """
-    name = models.CharField(max_length=100)
+    user = models.ForeignKey(User , on_delete=models.CASCADE, null=True , blank=True)
     ticket = models.ForeignKey(Ticket , on_delete=models.SET_NULL , null=True , blank=True)
     reward = models.ForeignKey(Reward , on_delete=models.SET_NULL , null=True , blank=True)
     lucky_draw = models.ForeignKey(LuckyDraw , on_delete=models.SET_NULL , null=True , blank=True)
-    win_date =  models.DateTimeField(auto_now_add=True, null=True, blank = True)
+    win_date =  models.DateField(null=True, blank = True)
 
     def __str__(self):
         return self.name
