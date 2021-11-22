@@ -31,15 +31,15 @@ export class DataService {
   }
 
   registerInDraw(drawId: any, data: any) {
-    return this.http.post(`${API_URL}/luckydraws/${drawId}/register`, data);
+    return this.http.post(`${API_URL}/luckydraws/${drawId}/register/`, data);
   }
 
   getUpcomingEvent(drawId: any) {
-    return this.http.get(`${API_URL}/luckydraws/${drawId}/nextevent`);
+    return this.http.get(`${API_URL}/luckydraws/${drawId}/nextevent/`);
   }
 
   computeWinner(drawId: any, data: any) {
-    return this.http.post(`${API_URL}/luckydraws/${drawId}/compute`, data);
+    return this.http.post(`${API_URL}/luckydraws/${drawId}/compute/`, data);
   }
 
   getWinners(span: any) {
