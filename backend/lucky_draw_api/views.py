@@ -99,7 +99,7 @@ class LuckyDrawViewSet(viewsets.ModelViewSet):
   serializer_class = LuckyDrawSerializer
 
   @action(detail=True, methods=['get'])
-  def next_event(self, request, pk = None):
+  def nextevent(self, request, pk = None):
     """
       Task 2: Design an API which shows the next Lucky Draw Event timing & the corresponding reward.
     """
