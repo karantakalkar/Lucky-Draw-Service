@@ -6,29 +6,15 @@
     </button>
   </div>
 
-  <div class="container">
+  <div class="container" *ngIf="upcoming">
     <mat-card>
       <mat-card-content>
-        <div fxLayout="row wrap" class="content">
-          <div fxFlex="50%" class="mat-body-strong">
-            User Name
-          </div>
-          <div fxFlex="50%">
-            {{ user.username }}
-          </div>
-          <div fxFlex="50%" class="mat-body-strong">
-            ID
-          </div>
-          <div fxFlex="50%">
-            {{ user.id }}
-          </div>
-          <div fxFlex="50%" class="mat-body-strong" *ngIf="user.is_staff">
-            Staff
-          </div>
-          <div fxFlex="50%" *ngIf="user.is_staff">
-            Super User
-          </div>
-        </div>
+        <p id="demo">
+          <b>Upcoming Event</b> <br><br>
+          {{ upcoming.draw }} <br><br>
+          Reward: {{ upcoming.name }} <br><br>
+          {{ upcoming.redeem_date }} &nbsp; {{ upcoming.timing }} Hrs
+        </p>
       </mat-card-content>
     </mat-card>
   </div>
@@ -69,7 +55,7 @@
       <mat-card-actions fxLayoutAlign="center">
         <button type="submit" color="primary" mat-raised-button (click) ='register()' [disabled]="ownedTickets.length == 0">Participate</button>
       </mat-card-actions>
-      <table id="tables">
+      <table id="tables" *ngIf="luckydraw.value">
         <thead>
            <tr>
               <th>Reward</th>

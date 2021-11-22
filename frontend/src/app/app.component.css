@@ -3,3 +3,7 @@
   font-size: 30px;
   margin: 5% 2% 7.5% 2%;
 }
+canvas {
+  height: 100%; /* we need these for full-screen effect */
+  width: 100%;
+}

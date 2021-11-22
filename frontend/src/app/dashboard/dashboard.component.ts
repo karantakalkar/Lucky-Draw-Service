@@ -33,7 +33,6 @@ export class DashboardComponent implements OnInit, OnChanges {
 
   ngOnChanges(): void {
     this.winners = this.data.winners;
-    this.luckydraw.setValue(this.data.draws[0]);
     this.ownedTickets = this.data.tickets.filter((ticket: any) => ticket.user == this.user.id );
   }
 
@@ -61,6 +60,7 @@ export class DashboardComponent implements OnInit, OnChanges {
     this.dataService.getUpcomingEvent(draw.id).subscribe((reward: any) => {
       this.upcoming = reward;
       this.upcoming['timing'] = draw.timing;
+      this.upcoming['draw'] = draw.name;
       console.log(this.upcoming)
     })
   }

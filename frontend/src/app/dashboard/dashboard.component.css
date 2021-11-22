@@ -25,3 +25,7 @@
   background-color: #3f51b5;
   color: white;
 }
+canvas {
+  height: 100%; /* we need these for full-screen effect */
+  width: 100%;
+}
