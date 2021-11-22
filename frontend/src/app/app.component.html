@@ -1,0 +1,17 @@
+
+
+<div fxLayoutAlign="center center" style="margin-top: 21.5%;">
+
+    <ng-container *ngIf="!toggle">
+
+      <app-login fxLayoutAlign="center" (userEmitter)="showDash($event)"></app-login>
+
+    </ng-container>
+
+    <ng-container *ngIf="toggle">
+
+      <app-dashboard fxLayoutAlign="center" [user]="user" (back)="toggle = false"></app-dashboard>
+
+    </ng-container>
+
+</div>

@@ -1,0 +1,42 @@
+<div fxLayout="column">
+
+  <div class="container">
+    <button mat-raised-button color="warn" (click)="back.emit()" style="margin-bottom: 10px; width:20px">
+      Back
+    </button>
+  </div>
+
+  <div class="container">
+
+    <mat-card>
+
+      <mat-card-content>
+
+        <div fxLayout="row wrap" class="content">
+
+          <div fxFlex="50%" class="mat-body-strong">
+            User Name
+          </div>
+
+          <div fxFlex="50%">
+            {{ user.username }}
+          </div>
+
+          <div fxFlex="50%" class="mat-body-strong">
+            ID
+          </div>
+
+          <div fxFlex="50%">
+            {{ user.id }}
+          </div>
+
+
+        </div>
+
+      </mat-card-content>
+
+    </mat-card>
+
+  </div>
+
+</div>

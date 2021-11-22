@@ -1,0 +1,37 @@
+<div class="container">
+
+  <mat-card>
+
+    <mat-card-content fxLayoutAlign="center">
+
+    <form  [formGroup]="loginForm" fxFlexFill>
+
+      <div fxLayout="column">
+
+        <mat-form-field>
+          <mat-label>User Name</mat-label>
+            <input matInput  formControlName="username" required>
+            <mat-error *ngIf="loginForm.controls.username.hasError('required')">Email is required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Password</mat-label>
+            <input matInput  type="password" formControlName="password" required>
+            <mat-error *ngIf="loginForm.controls.password.hasError('required')">Password is required</mat-error>
+        </mat-form-field>
+
+        <!-- <mat-error *ngIf="notFound" style="margin-bottom: 5px;">No student found with the given username address.</mat-error> -->
+
+      </div>
+
+    </form>
+
+    </mat-card-content>
+
+    <mat-card-actions fxLayoutAlign="center">
+      <button type="submit" color="primary" mat-raised-button (click) ='submit()' [disabled] = 'loginForm.invalid'>Submit</button>
+    </mat-card-actions>
+
+  </mat-card>
+
+</div>

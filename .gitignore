@@ -1,1 +1,7 @@
 __pycache__
+
+# compiled output
+/frontend//dist
+
+# dependencies
+/frontend/node_modules
