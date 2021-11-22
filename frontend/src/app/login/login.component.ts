@@ -10,9 +10,11 @@ import {FormGroup, FormControl, Validators} from '@angular/forms';
 export class LoginComponent implements OnInit {
 
   notFound: boolean = false;
+  signup: boolean = false;
 
   loginForm = new FormGroup({
     username: new FormControl('', [Validators.required]),
+    email: new FormControl('', [Validators.email]),
     password: new FormControl('', [Validators.required]),
   });
 
@@ -27,15 +29,27 @@ export class LoginComponent implements OnInit {
   submit(){
     let form = this.loginForm.value;
 
-    this.authService.login(form).subscribe(
-      (response: any) => {
-        console.log(response.user)
-        this.userEmitter.emit(response.user);
-      },
-      (error: any) => {
-        console.log(error.message);
-      }
-    )
+    if(this.signup) {
+      this.authService.signup(form).subscribe(
+        (response: any) => {
+          console.log(response)
+          this.userEmitter.emit(response);
+        },
+        (error: any) => {
+          console.log(error.message);
+        }
+      )
+    } else {
+      this.authService.login(form).subscribe(
+        (response: any) => {
+          console.log(response.user)
+          this.userEmitter.emit(response.user);
+        },
+        (error: any) => {
+          console.log(error.message);
+        }
+      )
+    }
  
   }
 

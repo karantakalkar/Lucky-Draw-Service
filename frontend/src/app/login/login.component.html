@@ -2,6 +2,8 @@
 
   <mat-card>
 
+  <mat-card-title fxLayoutAlign="center" style="font-size: 17px;">{{ signup ? "Sign Up" : "Login"}}</mat-card-title>
+
     <mat-card-content fxLayoutAlign="center">
 
     <form  [formGroup]="loginForm" fxFlexFill>
@@ -14,6 +16,12 @@
             <mat-error *ngIf="loginForm.controls.username.hasError('required')">Email is required</mat-error>
         </mat-form-field>
 
+        <mat-form-field *ngIf="signup">
+          <mat-label>E-mail</mat-label>
+            <input matInput  formControlName="email">
+            <mat-error *ngIf="loginForm.controls.username.hasError('email')">Email format incorrect</mat-error>
+        </mat-form-field>
+
         <mat-form-field>
           <mat-label>Password</mat-label>
             <input matInput  type="password" formControlName="password" required>
@@ -21,6 +29,7 @@
         </mat-form-field>
 
         <!-- <mat-error *ngIf="notFound" style="margin-bottom: 5px;">No student found with the given username address.</mat-error> -->
+        <mat-hint fxLayoutAlign="center" style="margin-bottom: 5px;" (click)="signup = !signup">{{ signup ? "Already an user ?" : "Dont have an account?"}}</mat-hint>
 
       </div>
 
