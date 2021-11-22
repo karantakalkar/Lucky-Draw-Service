@@ -11,6 +11,7 @@ const API_URL = environment.apiUrl;
 })
 export class DataService {
 
+
   /**
    * @param {HttpClient} http Http Client to send requests.
    */
@@ -20,9 +21,9 @@ export class DataService {
     return this.http.get(API_URL + '/tickets');
   }
 
-  getRaffleTickets(amount: any) {
+  getRaffleTickets(amount: any, data: any) {
     const httpParams = new HttpParams().set('amount', amount );
-    return this.http.get(API_URL + '/tickets', { params: httpParams });
+    return this.http.post(API_URL + '/tickets/', data, { params: httpParams });
   }
 
   getLuckyDraws(): Observable<any> {
@@ -43,7 +44,7 @@ export class DataService {
 
   getWinners(span: any) {
     const httpParams = new HttpParams().set('span', span );
-    return this.http.get(API_URL + '/winners', { params: httpParams });
+    return this.http.get(API_URL + '/winners/', { params: httpParams });
   }
 
 }

@@ -32,7 +32,6 @@ export class LoginComponent implements OnInit {
     if(this.signup) {
       this.authService.signup(form).subscribe(
         (response: any) => {
-          console.log(response)
           this.userEmitter.emit(response);
         },
         (error: any) => {
@@ -42,7 +41,6 @@ export class LoginComponent implements OnInit {
     } else {
       this.authService.login(form).subscribe(
         (response: any) => {
-          console.log(response.user)
           this.userEmitter.emit(response.user);
         },
         (error: any) => {

@@ -1,41 +1,78 @@
-<div fxLayout="column">
+<div fxLayout="column" fxLayoutGap="5%">
 
   <div class="container">
-    <button mat-raised-button color="warn" (click)="back.emit()" style="margin-bottom: 10px; width:20px">
+    <button mat-raised-button color="warn" (click)="back.emit()" style="width:20px">
       Back
     </button>
   </div>
 
   <div class="container">
-
     <mat-card>
-
       <mat-card-content>
-
         <div fxLayout="row wrap" class="content">
-
           <div fxFlex="50%" class="mat-body-strong">
             User Name
           </div>
-
           <div fxFlex="50%">
             {{ user.username }}
           </div>
-
           <div fxFlex="50%" class="mat-body-strong">
             ID
           </div>
-
           <div fxFlex="50%">
             {{ user.id }}
           </div>
-
+          <div fxFlex="50%" class="mat-body-strong" *ngIf="user.is_staff">
+            Staff
+          </div>
+          <div fxFlex="50%" *ngIf="user.is_staff">
+            Super User
+          </div>
         </div>
-
       </mat-card-content>
-
     </mat-card>
-
   </div>
+
+  <div>
+    <mat-card>
+      <mat-card-content>
+          <div fxLayout="column">
+            <mat-form-field>
+              <mat-label>Tickets</mat-label>
+                <input matInput type="number"  min="1" max="5" [formControl]="tickets">
+            </mat-form-field>
+          </div>
+      </mat-card-content>
+      <mat-card-actions fxLayoutAlign="center">
+        <button type="submit" color="primary" mat-raised-button (click) ='order()'>Get Tickets</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <div>
+    <mat-card>
+      <mat-card-content>
+        <div fxLayout="column">
+          <mat-form-field>
+            <mat-label>Lucky Draw</mat-label>
+              <input matInput [formControl]="luckydraw">
+          </mat-form-field>
+        </div>
+      <mat-card-actions fxLayoutAlign="center">
+        <button type="submit" color="primary" mat-raised-button (click) ='order()'>Participate</button>
+      </mat-card-actions>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div *ngIf="user.is_staff">
+    <mat-card>
+      <mat-card-content>
+        
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  
 
 </div>
