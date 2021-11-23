@@ -28,8 +28,6 @@ class TicketSerializer(serializers.ModelSerializer):
        fields = ('unique_code', 'is_used', 'user', 'id')
        read_only_fields = ('unique_code', 'is_used')
 
-    
-
     # override default method to add unique_code to ticket
     def create(self, validated_data):
         unique_code = generate_code()

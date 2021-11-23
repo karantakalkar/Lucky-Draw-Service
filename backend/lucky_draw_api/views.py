@@ -18,10 +18,18 @@ from lucky_draw_api.models import Ticket, Reward, LuckyDraw, Winner
 class UserViewSet(viewsets.ModelViewSet):
   """
     CRUD Model Viewset for User
+
+    GET /users
+    POST /users/
+    POST /users/login/
+    PUT /users/{{pk}}/
+    DELETE /users/{{pk}}/
+
   """
   queryset = User.objects.all()
   serializer_class = UserSerializer
 
+  # login endpoint
   @action(detail=False, methods=['post'])
   def login(self, request):
       response = {}
@@ -33,23 +41,27 @@ class UserViewSet(viewsets.ModelViewSet):
         username = request.data.get('username')
         password = request.data.get('password')
 
+        # chech username
         if username is None:
           status_code = status.HTTP_400_BAD_REQUEST
           response['message'] = 'username is required'
           raise Exception('username is required')
         
+        # chech password
         if password is None:
           status_code = status.HTTP_400_BAD_REQUEST
           response['message'] = 'password is required'
           raise Exception('password is required')
-
+        
+        # using filter instead of get for error handling
         user = User.objects.filter(username = username).first()
 
         if user is None:
           status_code = status.HTTP_400_BAD_REQUEST
           response['message'] = 'no user with given username exists'
           raise Exception('no user with given username exists')
-
+        
+        # password validation
         if not check_password(password, user.password):
           status_code = status.HTTP_400_BAD_REQUEST
           response['message'] = 'wrong password'
@@ -66,13 +78,29 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class RewardViewSet(viewsets.ModelViewSet):
   """
-    CRUD Model Viewset for Reward
+    CRUD Model Viewset for Rewards
+
+    GET /rewards
+    POST /rewards/
+    PUT /rewards/{{pk}}/
+    DELETE /rewards/{{pk}}/
+
   """
   queryset = Reward.objects.all()
   serializer_class = RewardSerializer
 
 
 class TicketViewSet(viewsets.ModelViewSet):
+  """
+    CRUD Model Viewset for Tickets
+
+    GET /tickets
+    POST /tickets/
+    POST /tickets/?amount=x
+    PUT /tickets/{{pk}}/
+    DELETE /tickets/{{pk}}/
+
+  """
   queryset = Ticket.objects.all()
   serializer_class = TicketSerializer
 
@@ -84,6 +112,7 @@ class TicketViewSet(viewsets.ModelViewSet):
     num = self.request.query_params.get('amount')
     data = [request.data]
 
+    # multiple tickets
     if num:
       data = data*int(num)
 
@@ -95,6 +124,18 @@ class TicketViewSet(viewsets.ModelViewSet):
     return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 class LuckyDrawViewSet(viewsets.ModelViewSet):
+  """
+    CRUD Model Viewset for LuckyDraws
+
+    GET /luckydraws
+    GET /luckydraws/nextevent
+    POST /luckydraws/
+    POST /luckydraws/{{pk}}/register/
+    POST /luckydraws/{{pk}}/compute/
+    PUT /luckydraws/{{pk}}/
+    DELETE /luckydraws/{{pk}}/
+
+  """
   queryset = LuckyDraw.objects.all()
   serializer_class = LuckyDrawSerializer
 
@@ -110,21 +151,25 @@ class LuckyDrawViewSet(viewsets.ModelViewSet):
     try:
       lucky_draw = LuckyDraw.objects.filter(pk = pk).first()
 
+      # check lucky draw
       if lucky_draw is None:
         status_code = status.HTTP_404_NOT_FOUND
         response['message'] = 'no lucky draw with given id exists'
         raise Exception('no lucky draw with given id exists')
-
+      
+      # check if lucky draw is active
       if not lucky_draw.is_active:
         status_code = status.HTTP_403_FORBIDDEN
         response['message'] = 'lucky_draw expired'
         raise Exception('lucky_draw expired')
-
+      
+      # check if lucky draw has rewards
       if len(lucky_draw.rewards.all()) == 0:
         status_code = status.HTTP_400_BAD_REQUEST
         response['message'] = 'no rewards announced'
         raise Exception('no rewards announced')
       
+      # return the next active event ordered by redeem date
       next_event = lucky_draw.rewards.filter(redeem_date__gt = datetime.now(), is_won = False).order_by('redeem_date').first()
 
       serializer = RewardSerializer(next_event)
@@ -148,6 +193,7 @@ class LuckyDrawViewSet(viewsets.ModelViewSet):
     try:
       lucky_draw = LuckyDraw.objects.filter(pk = pk).first()
 
+      # check lucky draw
       if lucky_draw is None:
         status_code = status.HTTP_404_NOT_FOUND
         response['message'] = 'no lucky draw with given id exists'
@@ -155,6 +201,7 @@ class LuckyDrawViewSet(viewsets.ModelViewSet):
 
       ticket_id = request.data.get('ticket_id')
 
+      # check ticket
       if ticket_id is None:
           status_code = status.HTTP_400_BAD_REQUEST
           response['message'] = 'ticket_id is required'
@@ -162,11 +209,13 @@ class LuckyDrawViewSet(viewsets.ModelViewSet):
 
       ticket = Ticket.objects.get(id = ticket_id)
 
+      # check if lucky draw is active
       if not lucky_draw.is_active:
           status_code = status.HTTP_403_FORBIDDEN
           response['message'] = 'lucky_draw expired'
           raise Exception('lucky_draw expired')
-
+      
+      # check if ticket is used
       if ticket.is_used:
           status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
           response['message'] = 'ticket already deposited'
@@ -174,6 +223,7 @@ class LuckyDrawViewSet(viewsets.ModelViewSet):
       
       user = ticket.user
 
+      # check if user already registered
       if lucky_draw.reg_tickets.filter(user = user):
           status_code = status.HTTP_403_FORBIDDEN
           response['message'] = 'you are already registered for this lucky draw'
@@ -204,6 +254,7 @@ class LuckyDrawViewSet(viewsets.ModelViewSet):
     try:
       lucky_draw = LuckyDraw.objects.filter(pk = pk).first()
 
+      # check lucky draw
       if lucky_draw is None:
         status_code = status.HTTP_404_NOT_FOUND
         response['message'] = 'no lucky draw with given id exists'
@@ -211,13 +262,16 @@ class LuckyDrawViewSet(viewsets.ModelViewSet):
       
       redeem_date = request.data.get('redeem_date')
 
+      # check redeem date
       if redeem_date is None:
           status_code = status.HTTP_400_BAD_REQUEST
           response['message'] = 'redeem_date is required'
           raise Exception('redeem_date is required')
-
+      
+      # format text to date
       redeem_date = datetime.strptime(redeem_date, "%Y-%m-%d").date()
       
+      # check if lucky draw is active
       if not lucky_draw.is_active:
           status_code = status.HTTP_403_FORBIDDEN
           response['message'] = 'lucky_draw expired'
@@ -225,18 +279,22 @@ class LuckyDrawViewSet(viewsets.ModelViewSet):
 
       tickets = lucky_draw.reg_tickets.all()
 
+      # check if there are tickets registered for the draw
       if len(tickets) == 0:
           status_code = status.HTTP_422_UNPROCESSABLE_ENTITY
           response['message'] = 'No tickets registered for the draw'
           raise Exception('no tickets registered for the draw')
       
+      # find the upcoming reward with given redeem date
       reward = lucky_draw.rewards.filter(redeem_date=redeem_date).first()
 
+      # check if reward exists
       if reward is None:
           status_code = status.HTTP_400_BAD_REQUEST
           response['message'] = 'No reward announced on given date'
           raise Exception('No reward announced on given date')
-
+      
+      # check if reward has been won
       if reward.is_won:
           status_code = status.HTTP_403_FORBIDDEN
           response['message'] = 'Reward already claimed for today'
@@ -250,6 +308,7 @@ class LuckyDrawViewSet(viewsets.ModelViewSet):
       reward.is_won = True
       reward.save()
 
+      # create winner entry
       winner_entry = Winner.objects.create(user = winner, ticket = win_ticket, reward = reward, lucky_draw = lucky_draw, win_date = redeem_date)
 
       status_code = status.HTTP_200_OK
@@ -261,6 +320,16 @@ class LuckyDrawViewSet(viewsets.ModelViewSet):
 
 
 class WinnerViewSet(viewsets.ReadOnlyModelViewSet):
+  """
+    CRUD Model Viewset for Winners
+
+    GET /winners
+    GET /winners/?span=x
+    POST /winners/
+    PUT /winners/{{pk}}/
+    DELETE /winners/{{pk}}/
+
+  """
   serializer_class = WinnerSerializer
   queryset = Winner.objects.all()
 
@@ -272,7 +341,8 @@ class WinnerViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = self.queryset
     span = self.request.query_params.get('span')
-  
+    
+    # modify queryset to include winners in last `span` days only
     if span:
         queryset = queryset.filter(win_date__gte = datetime.now() - timedelta(days = int(span)))
 
