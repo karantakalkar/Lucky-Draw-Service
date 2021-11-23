@@ -128,7 +128,7 @@ class LuckyDrawViewSet(viewsets.ModelViewSet):
     CRUD Model Viewset for LuckyDraws
 
     GET /luckydraws
-    GET /luckydraws/nextevent
+    GET /luckydraws/{{pk}}/nextevent/
     POST /luckydraws/
     POST /luckydraws/{{pk}}/register/
     POST /luckydraws/{{pk}}/compute/
