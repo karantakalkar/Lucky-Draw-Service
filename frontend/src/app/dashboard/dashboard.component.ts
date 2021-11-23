@@ -39,21 +39,22 @@ export class DashboardComponent implements OnInit, OnChanges {
   order() {
     this.dataService.getRaffleTickets(this.tickets.value, { "user": this.user.id.toString() }).subscribe((res: any) => {
       this.ownedTickets = this.ownedTickets.concat(res);
-    })
+    },
+    (error: any) => {
+      window.alert(error.error.message)
+    }
+    )
   }
 
   register() {
-    this.dataService.registerInDraw(this.luckydraw.value.id, { "ticket_id": this.regticket.value }).subscribe((res: any) => {
-       let index = this.ownedTickets.indexOf(this.regticket)
-       this.ownedTickets.splice(index,1)
-       this.ownedTickets.push(res.reg_ticket);
+    this.dataService.registerInDraw(this.luckydraw.value.id, { "ticket_id": this.regticket.value }).subscribe(
+      (data: any) => {
        this.regticket.setValue(null)
-       console.log(res)
-    }),
-    (err: any) => {
-      console.log(err.message)
-      window.alert(err['message']);
-    }
+      },
+      (error: any) => {
+        window.alert(error.error.message)
+      }
+    )
   }
 
   getupcoming(draw: any) {
@@ -62,7 +63,11 @@ export class DashboardComponent implements OnInit, OnChanges {
       this.upcoming['timing'] = draw.timing;
       this.upcoming['draw'] = draw.name;
       console.log(this.upcoming)
-    })
+    },
+    (error: any) => {
+      window.alert(error.error.message)
+    }
+    )
   }
 
   announce(reward: any) {
@@ -70,7 +75,11 @@ export class DashboardComponent implements OnInit, OnChanges {
       this.winners.push(res.winner)
       reward.is_won = true;
       this.getupcoming(this.luckydraw)
-    })
+    },
+    (error: any) => {
+      window.alert(error.error.message)
+    }
+    )
   }
 
 }
