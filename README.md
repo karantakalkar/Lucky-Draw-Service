@@ -29,11 +29,12 @@ npm install -g @angular/cli
 ```
 npm install
 ```
+Set `apiUrl` in `environment.ts` to the port where server is running, default api url is `http://localhost:8080`.
+
 To preview the app, run the following command and navigate to `http://localhost:4200/`.
 ```
 ng serve
 ```
-
 ### Architecture
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ![arch](https://user-images.githubusercontent.com/54709463/143023164-07c4b5cb-2058-4e79-bda1-b0a4213f83b9.jpg)

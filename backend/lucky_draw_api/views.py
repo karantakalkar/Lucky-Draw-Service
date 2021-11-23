@@ -41,13 +41,13 @@ class UserViewSet(viewsets.ModelViewSet):
         username = request.data.get('username')
         password = request.data.get('password')
 
-        # chech username
+        # check username
         if username is None:
           status_code = status.HTTP_400_BAD_REQUEST
           response['message'] = 'username is required'
           raise Exception('username is required')
         
-        # chech password
+        # check password
         if password is None:
           status_code = status.HTTP_400_BAD_REQUEST
           response['message'] = 'password is required'
@@ -184,7 +184,7 @@ class LuckyDrawViewSet(viewsets.ModelViewSet):
   @action(detail=True, methods=['post'])
   def register(self, request, pk = None):
     """
-      Task 3: Design an API which allows users to participate in the lcuky draw (only once).
+      Task 3: Design an API which allows users to participate in the lucky draw (only once).
     """
     response = {}
     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
